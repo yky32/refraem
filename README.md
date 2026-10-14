@@ -26,8 +26,6 @@
   <a href="#install">Install</a>
   ·
   <a href="#shortcuts">Shortcuts</a>
-  ·
-  <a href="#develop">Develop</a>
 </p>
 
 ---
@@ -43,7 +41,7 @@ Refraem replaces a separate window manager and screenshot utility with **one men
 | **OCR** | Region to clipboard as text (^⌥⌘O) |
 | **Record** | Planned |
 
-Open source ([MIT](LICENSE)). Inspect, fork, and contribute on GitHub.
+Open source under the [MIT](LICENSE) license.
 
 ## Install
 
@@ -98,29 +96,6 @@ Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview 
 |-------|--------|
 | Push to `main` | [Actions](https://github.com/yky32/refraem/actions) → **Build** → **Artifacts** |
 | Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) |
-
-Maintainers: `git tag v0.1.0 && git push origin v0.1.0`
-
-## Develop
-
-**Requirements:** macOS 14+, Xcode 15+ or Swift 6 toolchain
-
-```bash
-git clone https://github.com/yky32/refraem.git
-cd refraem
-open Package.swift    # Run in Xcode (⌘R)
-# or: swift run Refraem
-```
-
-Local `.app`:
-
-```bash
-./scripts/build-app.sh ~/Applications/Refraem.app
-```
-
-Optional **Fastlane** ([yky32/lid](https://github.com/yky32/lid) pattern): `bundle install && bundle exec fastlane mac install`
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for pull requests and releases.
 
 ## Brand
 
