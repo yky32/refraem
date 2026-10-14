@@ -1,52 +1,70 @@
-# Refraem
+<p align="center">
+  <img src="Sources/Refraem/Resources/Brand/refraem-mark-color.svg" width="96" alt="Refraem" />
+</p>
 
-**One menu bar app for Mac** — split-screen layout, screenshots, and (soon) recording.  
-Pronounced *Reframe* (ree-FRAME). Native Swift, no Electron.
+<h1 align="center">Refraem</h1>
 
 <p align="center">
-  <img src="Sources/Refraem/Resources/Brand/refraem-mark-on-light.svg" width="120" alt="Refraem logo" />
+  <strong>Window layout and screen capture in one menu bar app for Mac.</strong><br />
+  Native Swift · macOS 14+ · No Electron
+</p>
+
+<p align="center">
+  <em>Pronounced</em> <strong>Reframe</strong> <em>(ree-FRAME)</em>
 </p>
 
 <p align="center">
   <a href="https://github.com/yky32/refraem/actions/workflows/build.yml"><img src="https://github.com/yky32/refraem/actions/workflows/build.yml/badge.svg" alt="Build"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/macOS-14%2B-lightgrey.svg" alt="macOS 14+">
-  <img src="https://img.shields.io/badge/Swift-6-orange.svg" alt="Swift 6">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT"></a>
+  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-000000?logo=apple&logoColor=white" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white" alt="Swift 6">
+</p>
+
+<p align="center">
+  <a href="https://github.com/yky32/refraem/releases"><strong>Download</strong></a>
+  ·
+  <a href="#install">Install</a>
+  ·
+  <a href="#shortcuts">Shortcuts</a>
+  ·
+  <a href="#develop">Develop</a>
 </p>
 
 ---
 
-## Why Refraem?
+## Overview
 
-If you use separate tools for **window snapping** and **screen capture**, Refraem combines them into **one menu bar icon** — similar workflow to popular utilities, rebuilt as a single open-source app you can inspect and extend.
+Refraem replaces a separate window manager and screenshot utility with **one menu bar presence**: snap windows, capture the display, and copy text from the screen—without leaving the menu bar.
 
-| | |
-|---|---|
-| **Layout** | Halves, thirds, quarters — keyboard shortcuts like Rectangle (^⌥) |
-| **Capture** | Full screen & area — ⇧⌘1 / ⇧⌘2 |
-| **OCR** | Select region → text on clipboard (^⌥⌘O) |
-| **Record** | Coming soon |
+| Capability | Details |
+|------------|---------|
+| **Layout** | Halves, thirds, quarters; global shortcuts (Rectangle-style ^⌥) |
+| **Capture** | Full screen and region; ⇧⌘1 / ⇧⌘2 |
+| **OCR** | Region to clipboard as text (^⌥⌘O) |
+| **Record** | Planned |
+
+Open source ([MIT](LICENSE)). Inspect, fork, and contribute on GitHub.
 
 ## Install
 
-### Recommended — [Releases](https://github.com/yky32/refraem/releases)
+### Releases (recommended)
 
-1. Download the latest **`Refraem-*-macOS.zip`** from [Releases](https://github.com/yky32/refraem/releases).  
-2. Unzip and move **Refraem.app** to **Applications**.  
-3. Open **Refraem** from the menu bar (no Dock icon).
+1. Download **`Refraem-*-macOS.zip`** from [Releases](https://github.com/yky32/refraem/releases).
+2. Move **Refraem.app** to **Applications**.
+3. Launch from the **menu bar** (no Dock icon).
 
-> No release yet? Push a tag (`v0.1.0`) or grab the latest zip from [Actions → Artifacts](https://github.com/yky32/refraem/actions) (see [Download from CI](#download-from-ci)).
+> **No release yet?** Use [Actions → Artifacts](https://github.com/yky32/refraem/actions) after a `main` build, or tag `v0.1.0` for a GitHub Release.
 
-**First launch:** CI builds are not notarized. Use **Right-click → Open** once if macOS blocks the app.
+**Gatekeeper:** CI builds are ad-hoc signed. On first open, use **Right-click → Open** if macOS prompts.
 
-### Permissions (required)
+### Permissions
 
-| Permission | Used for |
-|------------|----------|
-| **Accessibility** | Move & resize windows (Layout) |
-| **Screen Recording** | Capture & OCR |
+| Permission | Purpose |
+|------------|---------|
+| Accessibility | Resize and position windows (Layout) |
+| Screen Recording | Screenshots and OCR |
 
-**System Settings → Privacy & Security** → enable **Refraem**.
+Enable **Refraem** under **System Settings → Privacy & Security**.
 
 ## Shortcuts
 
@@ -54,75 +72,68 @@ Refraem must be running (menu bar icon visible).
 
 | Action | Shortcut |
 |--------|----------|
-| Left / Right / Top / Bottom half | ^⌥ ← → ↑ ↓ |
-| Quarters | ^⌥ U I J K |
-| Thirds | ^⌥ D F G E T |
+| Left / right / top / bottom half | ^⌥ ← → ↑ ↓ |
+| Quarters | ^⌥ U · I · J · K |
+| Thirds | ^⌥ D · F · G · E · T |
 | Capture screen | ⇧⌘1 |
 | Capture area | ⇧⌘2 |
-| Recognize text | ^⌥⌘O |
+| Recognize text (OCR) | ^⌥⌘O |
 
-Captures are copied to the clipboard, saved under **Pictures/Refraem**, and shown in a preview window.
+Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview window.
 
 ## Roadmap
 
 | Feature | Status |
 |---------|--------|
-| Layout snap + global hotkeys | ✅ |
-| Capture screen / area + OCR | ✅ |
-| Scrolling capture | 🔜 |
-| Screen record | 🔜 |
-| Markup / pin (editor) | 🔜 |
-| Notarized release builds | 🔜 |
+| Layout snap and global hotkeys | Shipped |
+| Screen / area capture and OCR | Shipped |
+| Scrolling capture | Planned |
+| Screen recording | Planned |
+| Markup and pin | Planned |
+| Notarized release builds | Planned |
 
 ## Download from CI
 
-For contributors and early testers:
-
-| Trigger | Download |
-|---------|----------|
-| Push to **`main`** | [Actions](https://github.com/yky32/refraem/actions) → latest **Build** → **Artifacts** |
-| Tag **`v*`** | [Releases](https://github.com/yky32/refraem/releases) (best for sharing) |
+| Event | Where |
+|-------|--------|
+| Push to `main` | [Actions](https://github.com/yky32/refraem/actions) → **Build** → **Artifacts** |
+| Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) |
 
 Maintainers: `git tag v0.1.0 && git push origin v0.1.0`
 
 ## Develop
 
-**Requirements:** macOS 14+, Xcode 15+ / Swift 6
+**Requirements:** macOS 14+, Xcode 15+ or Swift 6 toolchain
 
 ```bash
 git clone https://github.com/yky32/refraem.git
 cd refraem
-open Package.swift          # Xcode → Run (⌘R)
-# or
-swift run Refraem
+open Package.swift    # Run in Xcode (⌘R)
+# or: swift run Refraem
 ```
 
-Install locally:
+Local `.app`:
 
 ```bash
 ./scripts/build-app.sh ~/Applications/Refraem.app
 ```
 
-**Fastlane** (optional, same style as [yky32/lid](https://github.com/yky32/lid)):
+Optional **Fastlane** ([yky32/lid](https://github.com/yky32/lid) pattern): `bundle install && bundle exec fastlane mac install`
 
-```bash
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-bundle install
-bundle exec fastlane mac install
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for PRs and release flow.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for pull requests and releases.
 
 ## Brand
 
-Logo & B&W marks: [`Sources/Refraem/Resources/Brand/`](Sources/Refraem/Resources/Brand/BRAND.md) · Bundle ID `app.yky.refraem`
+Marks and usage: [`Sources/Refraem/Resources/Brand/BRAND.md`](Sources/Refraem/Resources/Brand/BRAND.md) · Bundle ID `app.yky.refraem`
 
 ## License
 
-[MIT](LICENSE) — use, modify, and ship with attribution.
+[MIT](LICENSE)
 
 ---
 
 <p align="center">
-  <sub>Built by <a href="https://github.com/yky32">yky32</a> · Feedback welcome in <a href="https://github.com/yky32/refraem/issues">Issues</a></sub>
+  <a href="https://github.com/yky32/refraem/issues">Issues & feedback</a>
+  ·
+  <a href="https://github.com/yky32">yky32</a>
 </p>
