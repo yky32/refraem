@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Window layout and screen capture in one menu bar app for Mac.</strong><br />
-  Native Swift · macOS 14+ · No Electron
+  Native Swift · macOS 14+
 </p>
 
 <p align="center">
