@@ -1,0 +1,52 @@
+name: Release
+
+# Public download on GitHub → Releases (best for open source).
+# Create a tag: git tag v0.1.0 && git push origin v0.1.0
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish GitHub Release
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Build release app
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          chmod +x scripts/build-app.sh
+          ./scripts/build-app.sh "$GITHUB_WORKSPACE/build/Refraem.app"
+
+      - name: Zip for download
+        id: zip
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          OUT="build/Refraem-${VERSION}-macOS.zip"
+          ditto -c -k --sequesterRsrc --keepParent build/Refraem.app "$OUT"
+          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Refraem ${{ steps.zip.outputs.version }}
+          files: ${{ steps.zip.outputs.path }}
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: refraem-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: Build Refraem.app
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+          swift --version
+
+      - name: Build release app
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          chmod +x scripts/build-app.sh
+          ./scripts/build-app.sh "$GITHUB_WORKSPACE/build/Refraem.app"
+
+      - name: Zip for download
+        run: |
+          cd build
+          ditto -c -k --sequesterRsrc --keepParent Refraem.app "Refraem-macOS-${{ github.run_number }}.zip"
+
+      - name: Upload installable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Refraem-macOS-build-${{ github.run_number }}
+          path: build/Refraem-macOS-*.zip
+          retention-days: 90

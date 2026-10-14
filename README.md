@@ -3,6 +3,19 @@
 One menu bar Mac app — **layout** · **capture** · **record** (record next).  
 Pronounced like *Reframe*. Built to replace separate window + screenshot utilities with one fast, native tool.
 
+## Download (CI)
+
+| Trigger | Where to get the app |
+|---------|----------------------|
+| Every push to **`main`** | [Actions](https://github.com/yky32/refraem/actions) → latest **Build** run → **Artifacts** → `Refraem-macOS-*.zip` |
+| Version tag **`v*`** (e.g. `v0.1.0`) | [Releases](https://github.com/yky32/refraem/releases) → attach `.zip` (public install link) |
+
+Unzip → drag **Refraem.app** to Applications. CI builds are **ad-hoc signed** (not notarized): first open may require **Right-click → Open**. For notarized builds use Fastlane locally with your Developer ID.
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0   # creates a GitHub Release with zip
+```
+
 | | |
 |---|---|
 | **Product** | Refraem |
