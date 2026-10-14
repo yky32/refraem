@@ -1,1 +1,0 @@
-Refraem 0.1.0 — menu bar layout + capture. Enable Accessibility and Screen Recording.

@@ -55,6 +55,8 @@ Open source under the [MIT](LICENSE) license.
 
 **Gatekeeper:** CI builds are ad-hoc signed. On first open, use **Right-click → Open** if macOS prompts.
 
+**Trust:** Download only from **[Releases](https://github.com/yky32/refraem/releases)** or **Actions** on **`yky32/refraem`**. Verify bundle ID **`app.yky.refraem`**. See [SECURITY.md](SECURITY.md).
+
 ### Permissions
 
 | Permission | Purpose |

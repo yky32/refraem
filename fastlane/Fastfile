@@ -1,6 +1,5 @@
 default_platform(:mac)
 
-TEAM_ID = "3G34999H3A"
 APP_IDENTIFIER = "app.yky.refraem"
 SCHEME = "Refraem"
 # When you add Refraem.xcodeproj for App Store archives, point here (same pattern as lid/Lid.xcodeproj).
@@ -22,11 +21,17 @@ def api_key_path
   File.join(Dir.home, ".appstoreconnect", "api_key.p8")
 end
 
+def fastlane_team_id
+  id = ENV["FASTLANE_TEAM_ID"].to_s.strip
+  UI.user_error!("Set FASTLANE_TEAM_ID in fastlane/.env (see .env.example) — never commit it") if id.empty?
+  id
+end
+
 def build_api_key
   key_id = ENV["APP_STORE_CONNECT_API_KEY_ID"].to_s.strip
   issuer_id = ENV["APP_STORE_CONNECT_ISSUER_ID"].to_s.strip
-  UI.user_error!("Missing ASC API key id or issuer") if key_id.empty? || issuer_id.empty?
-  UI.user_error!("Missing #{api_key_path}") unless File.exist?(api_key_path)
+  UI.user_error!("Missing ASC API key id or issuer in environment") if key_id.empty? || issuer_id.empty?
+  UI.user_error!("Missing App Store Connect key file at ~/.appstoreconnect/api_key.p8") unless File.exist?(api_key_path)
   app_store_connect_api_key(
     key_id: key_id,
     issuer_id: issuer_id,
@@ -126,7 +131,7 @@ platform :mac do
       configuration: "Release",
       clean: true,
       export_method: "app-store",
-      export_team_id: TEAM_ID,
+      export_team_id: fastlane_team_id,
       output_directory: File.join(project_root, "build"),
       output_name: "Refraem.pkg"
     )

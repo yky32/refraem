@@ -4,11 +4,35 @@
 build/
 xcuserdata/
 DerivedData/
-vendor/bundle/
 .bundle/
+vendor/bundle/
+
+# Secrets & signing (never commit)
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.pem
+*.cer
+*.mobileprovision
+*.provisionprofile
+AuthKey_*
+*.keystore
+.appstoreconnect/
+**/api_key.p8
+secrets/
+credentials/
+
+# Fastlane local output & env
+fastlane/.env
 fastlane/report.xml
 fastlane/Preview.html
-# Keep fastlane/README.md (auto-generated) out of diffs if you prefer — lid tracks it; we ignore report only.
+fastlane/test_output/
+fastlane/README.md
+fastlane/notes/
+
+# Release artifacts
 *.ipa
 *.pkg
 *.dmg
