@@ -1,0 +1,14 @@
+.DS_Store
+.build/
+.swiftpm/
+build/
+xcuserdata/
+DerivedData/
+vendor/bundle/
+.bundle/
+fastlane/report.xml
+fastlane/Preview.html
+# Keep fastlane/README.md (auto-generated) out of diffs if you prefer — lid tracks it; we ignore report only.
+*.ipa
+*.pkg
+*.dmg

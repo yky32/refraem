@@ -1,0 +1,143 @@
+default_platform(:mac)
+
+TEAM_ID = "3G34999H3A"
+APP_IDENTIFIER = "app.yky.refraem"
+SCHEME = "Refraem"
+# When you add Refraem.xcodeproj for App Store archives, point here (same pattern as lid/Lid.xcodeproj).
+PROJECT = "Refraem.xcodeproj"
+
+def project_root
+  File.expand_path("..", __dir__)
+end
+
+def dist_app
+  File.join(project_root, "build", "Refraem.app")
+end
+
+def dmg_path
+  File.join(project_root, "build", "Refraem.dmg")
+end
+
+def api_key_path
+  File.join(Dir.home, ".appstoreconnect", "api_key.p8")
+end
+
+def build_api_key
+  key_id = ENV["APP_STORE_CONNECT_API_KEY_ID"].to_s.strip
+  issuer_id = ENV["APP_STORE_CONNECT_ISSUER_ID"].to_s.strip
+  UI.user_error!("Missing ASC API key id or issuer") if key_id.empty? || issuer_id.empty?
+  UI.user_error!("Missing #{api_key_path}") unless File.exist?(api_key_path)
+  app_store_connect_api_key(
+    key_id: key_id,
+    issuer_id: issuer_id,
+    key_filepath: api_key_path,
+    duration: 1200,
+    in_house: false
+  )
+end
+
+def marketing_version
+  File.read(File.join(project_root, "VERSION")).strip
+rescue
+  "0.1.0"
+end
+
+def build_number
+  ENV["BUILD_NUMBER"].to_s.strip.empty? ? Time.now.utc.strftime("%Y%m%d%H%M") : ENV["BUILD_NUMBER"].to_s.strip
+end
+
+def run_package!(output_app: dist_app)
+  ENV["MARKETING_VERSION"] = marketing_version
+  ENV["BUILD_NUMBER"] = build_number
+  sh("cd #{project_root.shellescape} && ./scripts/build-app.sh #{output_app.shellescape}")
+  UI.user_error!("Missing #{output_app}") unless File.directory?(output_app)
+end
+
+platform :mac do
+  desc "Release Swift build + Refraem.app under build/Refraem.app (ad-hoc sign unless CODE_SIGN_IDENTITY is set)"
+  lane :package do
+    run_package!
+    UI.success("Packaged #{dist_app} (#{marketing_version} #{build_number})")
+  end
+
+  desc "Package and copy to ~/Applications/Refraem.app"
+  lane :install do
+    run_package!
+    dest = File.expand_path("~/Applications/Refraem.app")
+    sh("rm -rf #{dest.shellescape}")
+    sh("cp -R #{dist_app.shellescape} #{dest.shellescape}")
+    UI.success("Installed #{dest}")
+  end
+
+  desc "Developer ID sign (set CODE_SIGN_IDENTITY) + notarize + staple. Needs ASC API key like lid."
+  lane :notarize_release do
+    identity = ENV["CODE_SIGN_IDENTITY"].to_s.strip
+    UI.user_error!("Set CODE_SIGN_IDENTITY to your Developer ID Application identity") if identity.empty?
+    run_package!
+    api_key = build_api_key
+    notarize(
+      api_key: api_key,
+      app_path: dist_app,
+      print_log: true,
+      staple: true
+    )
+    UI.success("Notarized #{dist_app}")
+  end
+
+  desc "Create build/Refraem.dmg from packaged app (requires create-dmg: brew install create-dmg)"
+  lane :dmg do
+    package unless File.directory?(dist_app)
+    sh("which create-dmg") # fail fast with install hint
+    sh(
+      "create-dmg",
+      "--volname", "Refraem",
+      "--window-pos", "200", "120",
+      "--window-size", "600", "400",
+      "--icon-size", "128",
+      "--icon", "Refraem.app", "150", "200",
+      "--hide-extension", "Refraem.app",
+      "--app-drop-link", "450", "200",
+      dmg_path,
+      dist_app
+    )
+    UI.success("DMG: #{dmg_path}")
+  end
+
+  desc "Zip notarized app for hosting (e.g. yky.app download)"
+  lane :zip_release do
+    package unless File.directory?(dist_app)
+    zip = File.join(project_root, "build", "Refraem-#{marketing_version}-#{build_number}.zip")
+    sh("cd #{File.join(project_root, 'build').shellescape} && ditto -c -k --sequesterRsrc --keepParent Refraem.app #{File.basename(zip).shellescape}")
+    UI.success("Zip: #{zip}")
+  end
+
+  desc "Mac App Store archive (requires Refraem.xcodeproj — run after Xcode target is added)"
+  lane :upload_testflight do
+    project = File.join(project_root, PROJECT)
+    unless File.directory?(project)
+      UI.user_error!(
+        "Missing #{PROJECT}. Open Package.swift in Xcode, add a macOS App target, or use lanes: package, notarize_release, dmg."
+      )
+    end
+    api_key = build_api_key
+    build_mac_app(
+      project: project,
+      scheme: SCHEME,
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      export_team_id: TEAM_ID,
+      output_directory: File.join(project_root, "build"),
+      output_name: "Refraem.pkg"
+    )
+    upload_to_testflight(
+      api_key: api_key,
+      app_identifier: APP_IDENTIFIER,
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      uses_non_exempt_encryption: false
+    )
+    UI.success("Uploaded #{APP_IDENTIFIER} to TestFlight (Mac)")
+  end
+end
