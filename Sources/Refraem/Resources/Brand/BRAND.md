@@ -1,41 +1,30 @@
 # Refraem brand
 
-Black and white only — no accent colors.
+Black and white only.
 
-## Mark meaning
+## Mark
 
-- **Outer rounded frame** — screen / capture  
-- **Center split** — layout (halves)  
-- **Filled left / outline right** — split-screen at a glance  
-- **Corner ticks** — viewfinder / record  
+**Front window frame** — one rounded rectangle with **three title-bar dots**. That is the screen-capture / frame element (no stacked back window in the logo).
 
-Pronunciation: *Reframe* (ree-FRAME).
+- Dots read as window chrome and “this frame is what you capture.”
+- Layout snapping is product behavior, not drawn in the icon (keeps the menu bar glyph clear at 18pt).
 
 ## Files
 
 | File | Use |
 |------|-----|
-| `refraem-mark.svg` | Menu bar (template, black + alpha) |
-| `refraem-mark-color.svg` | App icon, dark UI (white on black) |
-| `refraem-mark-on-light.svg` | Website, light backgrounds (black on white) |
-| `refraem-app-icon.jpg` | Raster app icon source (B&W) |
+| `refraem-mark.svg` | Menu bar (template) |
+| `refraem-mark-color.svg` | App icon, dark UI |
+| `refraem-mark-on-light.svg` | README, light backgrounds |
+| `refraem-app-icon.jpg` | Optional raster fallback |
 
 ## Palette
 
-| Token | Hex | Use |
-|-------|-----|-----|
-| Black | `#000000` | Fills, strokes on light |
-| White | `#FFFFFF` | Fills, strokes on dark |
-
-Gray only via opacity between black and white if needed (e.g. disabled UI) — not in the logo.
+| Token | Hex |
+|-------|-----|
+| Black | `#000000` |
+| White | `#FFFFFF` |
 
 ## Menu bar
 
-- 18×18 pt (@2x: 36px)  
-- **Template** image: `refraem-mark.svg`  
-- System tints for light/dark menu bar  
-
-## App icon
-
-1. Export from `refraem-mark-color.svg` (dark) or `refraem-mark-on-light.svg` (light).  
-2. Asset catalog 1024×1024 → macOS icon sizes.
+18×18 pt (@2x: 36px), template image, system tint in light/dark menu bar.
