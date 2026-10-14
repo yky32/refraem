@@ -9,11 +9,21 @@ if [[ ! -f "$BIN" ]]; then
   BIN="$ROOT/.build/out/Release/Refraem"
 fi
 
-BUNDLE="$ROOT/.build/out/Products/Release/Refraem_Refraem.bundle"
-if [[ ! -d "$BUNDLE" ]]; then
-  BUNDLE="$(find "$ROOT/.build" -path "*Release*Refraem_Refraem.bundle" -type d 2>/dev/null | head -1)"
+BUNDLE=""
+for candidate in \
+  "$ROOT/.build/out/Products/Release/Refraem_Refraem.bundle" \
+  "$ROOT/.build/release/Refraem_Refraem.bundle" \
+  "$ROOT/.build/arm64-apple-macosx/release/Refraem_Refraem.bundle"
+do
+  if [[ -d "$candidate" ]]; then
+    BUNDLE="$candidate"
+    break
+  fi
+done
+if [[ -z "$BUNDLE" ]]; then
+  BUNDLE="$(find "$ROOT/.build" -name "Refraem_Refraem.bundle" -type d 2>/dev/null | head -1)"
 fi
-if [[ ! -d "$BUNDLE" ]]; then
+if [[ -z "$BUNDLE" || ! -d "$BUNDLE" ]]; then
   echo "error: missing Refraem_Refraem.bundle — run swift build -c release first" >&2
   exit 1
 fi
