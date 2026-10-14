@@ -85,12 +85,12 @@ Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview 
 
 | Feature | Status |
 |---------|--------|
-| Layout snap and global hotkeys | Shipped |
-| Screen / area capture and OCR | Shipped |
-| Scrolling capture | Planned |
-| Screen recording | Planned |
-| Markup and pin | Planned |
-| Notarized release builds | Planned |
+| Layout snap and global hotkeys | ✅ |
+| Screen / area capture and OCR | ✅ |
+| Scrolling capture | 🔜 |
+| Screen recording | 🔜 |
+| Markup and pin | 🔜 |
+| Notarized release builds | 🔜 |
 
 ## Download from CI
 
