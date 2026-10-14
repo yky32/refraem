@@ -1,8 +1,6 @@
 default_platform(:mac)
 
-APP_IDENTIFIER = "app.yky.refraem"
 SCHEME = "Refraem"
-# When you add Refraem.xcodeproj for App Store archives, point here (same pattern as lid/Lid.xcodeproj).
 PROJECT = "Refraem.xcodeproj"
 
 def project_root
@@ -17,21 +15,39 @@ def dmg_path
   File.join(project_root, "build", "Refraem.dmg")
 end
 
+def versioned_dmg_path
+  File.join(project_root, "build", "Refraem-#{marketing_version}-#{build_number}.dmg")
+end
+
 def api_key_path
   File.join(Dir.home, ".appstoreconnect", "api_key.p8")
 end
 
+def app_identifier_value
+  ENV["APP_IDENTIFIER"].to_s.strip
+end
+
 def fastlane_team_id
   id = ENV["FASTLANE_TEAM_ID"].to_s.strip
-  UI.user_error!("Set FASTLANE_TEAM_ID in fastlane/.env (see .env.example) — never commit it") if id.empty?
+  UI.user_error!("Set FASTLANE_TEAM_ID (GitHub Secret or fastlane/.env)") if id.empty?
   id
 end
 
+def prepare_api_key_file!
+  p8 = ENV["APP_STORE_CONNECT_API_KEY_P8"].to_s
+  return if p8.strip.empty?
+
+  FileUtils.mkdir_p(File.dirname(api_key_path))
+  File.write(api_key_path, p8)
+  File.chmod(0o600, api_key_path)
+end
+
 def build_api_key
+  prepare_api_key_file!
   key_id = ENV["APP_STORE_CONNECT_API_KEY_ID"].to_s.strip
   issuer_id = ENV["APP_STORE_CONNECT_ISSUER_ID"].to_s.strip
-  UI.user_error!("Missing ASC API key id or issuer in environment") if key_id.empty? || issuer_id.empty?
-  UI.user_error!("Missing App Store Connect key file at ~/.appstoreconnect/api_key.p8") unless File.exist?(api_key_path)
+  UI.user_error!("Missing APP_STORE_CONNECT_API_KEY_ID / ISSUER_ID") if key_id.empty? || issuer_id.empty?
+  UI.user_error!("Missing App Store Connect .p8 (APP_STORE_CONNECT_API_KEY_P8 or ~/.appstoreconnect/api_key.p8)") unless File.exist?(api_key_path)
   app_store_connect_api_key(
     key_id: key_id,
     issuer_id: issuer_id,
@@ -42,6 +58,9 @@ def build_api_key
 end
 
 def marketing_version
+  tag = ENV["GITHUB_REF_NAME"].to_s.strip.sub(/^v/i, "")
+  return tag unless tag.empty?
+
   File.read(File.join(project_root, "VERSION")).strip
 rescue
   "0.1.0"
@@ -58,8 +77,24 @@ def run_package!(output_app: dist_app)
   UI.user_error!("Missing #{output_app}") unless File.directory?(output_app)
 end
 
+def create_dmg!
+  sh("which create-dmg")
+  sh(
+    "create-dmg",
+    "--volname", "Refraem",
+    "--window-pos", "200", "120",
+    "--window-size", "600", "400",
+    "--icon-size", "128",
+    "--icon", "Refraem.app", "150", "200",
+    "--hide-extension", "Refraem.app",
+    "--app-drop-link", "450", "200",
+    dmg_path,
+    dist_app
+  )
+end
+
 platform :mac do
-  desc "Release Swift build + Refraem.app under build/Refraem.app (ad-hoc sign unless CODE_SIGN_IDENTITY is set)"
+  desc "Swift build → Refraem.app (ad-hoc unless CODE_SIGN_IDENTITY is set)"
   lane :package do
     run_package!
     UI.success("Packaged #{dist_app} (#{marketing_version} #{build_number})")
@@ -74,10 +109,11 @@ platform :mac do
     UI.success("Installed #{dest}")
   end
 
-  desc "Developer ID sign (set CODE_SIGN_IDENTITY) + notarize + staple. Needs ASC API key like lid."
+  desc "Developer ID sign + notarize + staple (needs GitHub Secrets / fastlane/.env)"
   lane :notarize_release do
+    UI.user_error!("Set APP_IDENTIFIER") if app_identifier_value.empty?
     identity = ENV["CODE_SIGN_IDENTITY"].to_s.strip
-    UI.user_error!("Set CODE_SIGN_IDENTITY to your Developer ID Application identity") if identity.empty?
+    UI.user_error!("Set CODE_SIGN_IDENTITY") if identity.empty?
     run_package!
     api_key = build_api_key
     notarize(
@@ -89,26 +125,33 @@ platform :mac do
     UI.success("Notarized #{dist_app}")
   end
 
-  desc "Create build/Refraem.dmg from packaged app (requires create-dmg: brew install create-dmg)"
+  desc "DMG from packaged app (brew install create-dmg)"
   lane :dmg do
     package unless File.directory?(dist_app)
-    sh("which create-dmg") # fail fast with install hint
-    sh(
-      "create-dmg",
-      "--volname", "Refraem",
-      "--window-pos", "200", "120",
-      "--window-size", "600", "400",
-      "--icon-size", "128",
-      "--icon", "Refraem.app", "150", "200",
-      "--hide-extension", "Refraem.app",
-      "--app-drop-link", "450", "200",
-      dmg_path,
-      dist_app
-    )
+    create_dmg!
     UI.success("DMG: #{dmg_path}")
   end
 
-  desc "Zip notarized app for hosting (e.g. yky.app download)"
+  desc "CI release: sign, notarize, staple, versioned DMG for GitHub Releases"
+  lane :release_dmg do
+    UI.user_error!("Set APP_IDENTIFIER secret") if app_identifier_value.empty?
+    identity = ENV["CODE_SIGN_IDENTITY"].to_s.strip
+    UI.user_error!("Set CODE_SIGN_IDENTITY secret") if identity.empty?
+
+    run_package!
+    api_key = build_api_key
+    notarize(
+      api_key: api_key,
+      app_path: dist_app,
+      print_log: true,
+      staple: true
+    )
+    create_dmg!
+    sh("mv -f #{dmg_path.shellescape} #{versioned_dmg_path.shellescape}")
+    UI.success("Release DMG: #{versioned_dmg_path}")
+  end
+
+  desc "Zip packaged app"
   lane :zip_release do
     package unless File.directory?(dist_app)
     zip = File.join(project_root, "build", "Refraem-#{marketing_version}-#{build_number}.zip")
@@ -116,13 +159,12 @@ platform :mac do
     UI.success("Zip: #{zip}")
   end
 
-  desc "Mac App Store archive (requires Refraem.xcodeproj — run after Xcode target is added)"
+  desc "Mac App Store / TestFlight (requires Refraem.xcodeproj)"
   lane :upload_testflight do
+    UI.user_error!("Set APP_IDENTIFIER") if app_identifier_value.empty?
     project = File.join(project_root, PROJECT)
     unless File.directory?(project)
-      UI.user_error!(
-        "Missing #{PROJECT}. Open Package.swift in Xcode, add a macOS App target, or use lanes: package, notarize_release, dmg."
-      )
+      UI.user_error!("Missing #{PROJECT}. Use release_dmg for open-source SwiftPM builds.")
     end
     api_key = build_api_key
     build_mac_app(
@@ -137,12 +179,12 @@ platform :mac do
     )
     upload_to_testflight(
       api_key: api_key,
-      app_identifier: APP_IDENTIFIER,
+      app_identifier: app_identifier_value,
       skip_waiting_for_build_processing: true,
       skip_submission: true,
       distribute_external: false,
       uses_non_exempt_encryption: false
     )
-    UI.success("Uploaded #{APP_IDENTIFIER} to TestFlight (Mac)")
+    UI.success("Uploaded #{app_identifier_value} to TestFlight (Mac)")
   end
 end

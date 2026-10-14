@@ -1,7 +1,7 @@
 name: Release
 
-# Public download on GitHub → Releases (best for open source).
-# Create a tag: git tag v0.1.0 && git push origin v0.1.0
+# Tag push → notarized DMG on GitHub Releases (needs repository Secrets).
+#   git tag v0.1.0 && git push origin v0.1.0
 
 on:
   push:
@@ -14,9 +14,9 @@ permissions:
 
 jobs:
   release:
-    name: Publish GitHub Release
+    name: Notarized DMG (Fastlane)
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,28 +28,53 @@ jobs:
         run: |
           sudo xcode-select -s /Applications/Xcode.app
           xcodebuild -version
+          swift --version
 
-      - name: Build release app
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Import Developer ID certificate
         env:
-          BUILD_NUMBER: ${{ github.run_number }}
-        run: |
-          chmod +x scripts/build-app.sh
-          ./scripts/build-app.sh "$GITHUB_WORKSPACE/build/Refraem.app"
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: chmod +x scripts/ci-import-apple-cert.sh && ./scripts/ci-import-apple-cert.sh
 
-      - name: Zip for download
-        id: zip
+      - name: Build notarized release DMG
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+          FASTLANE_TEAM_ID: ${{ secrets.FASTLANE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          CODE_SIGN_IDENTITY: ${{ secrets.CODE_SIGN_IDENTITY }}
+        run: bundle exec fastlane mac release_dmg
+
+      - name: Locate release artifacts
+        id: artifacts
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          OUT="build/Refraem-${VERSION}-macOS.zip"
-          ditto -c -k --sequesterRsrc --keepParent build/Refraem.app "$OUT"
-          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          DMG=(build/Refraem-*-*.dmg)
+          if [[ ! -f "${DMG[0]}" ]]; then
+            echo "No DMG found under build/" >&2
+            exit 1
+          fi
+          echo "dmg=${DMG[0]}" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Create GitHub Release
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Refraem ${{ steps.zip.outputs.version }}
-          files: ${{ steps.zip.outputs.path }}
+          name: Refraem ${{ steps.artifacts.outputs.version }}
+          files: ${{ steps.artifacts.outputs.dmg }}
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}

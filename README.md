@@ -55,7 +55,7 @@ Open source under the [MIT](LICENSE) license.
 
 **Gatekeeper:** CI builds are ad-hoc signed. On first open, use **Right-click → Open** if macOS prompts.
 
-**Trust:** Download only from **[Releases](https://github.com/yky32/refraem/releases)** or **Actions** on **`yky32/refraem`**. Verify bundle ID **`app.yky.refraem`**. See [SECURITY.md](SECURITY.md).
+**Trust:** Download only from **[Releases](https://github.com/yky32/refraem/releases)** (notarized **DMG** on version tags) or **Actions** builds on **`yky32/refraem`**. See [SECURITY.md](SECURITY.md).
 
 ### Permissions
 
@@ -96,12 +96,12 @@ Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview 
 
 | Event | Where |
 |-------|--------|
-| Push to `main` | [Actions](https://github.com/yky32/refraem/actions) → **Build** → **Artifacts** |
-| Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) |
+| Push to `main` | [Actions](https://github.com/yky32/refraem/actions) → **Build** → **Artifacts** (zip, ad-hoc) |
+| Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) → **notarized DMG** (maintainer [Secrets](docs/GITHUB_SECRETS.md) required) |
 
 ## Brand
 
-Marks and usage: [`Sources/Refraem/Resources/Brand/BRAND.md`](Sources/Refraem/Resources/Brand/BRAND.md) · Bundle ID `app.yky.refraem`
+Marks and usage: [`Sources/Refraem/Resources/Brand/BRAND.md`](Sources/Refraem/Resources/Brand/BRAND.md)
 
 ## License
 

@@ -9,7 +9,7 @@ Install only from this repository:
 - [Releases](https://github.com/yky32/refraem/releases) (tagged builds), or  
 - [Actions → Artifacts](https://github.com/yky32/refraem/actions) from **`yky32/refraem`** on `main`.
 
-Do not use builds from unknown forks or third-party sites. Bundle ID: **`app.yky.refraem`**.
+Do not use builds from unknown forks or third-party sites. Confirm the app **bundle ID** matches the official Refraem release notes.
 
 ## Secrets (maintainers)
 
@@ -17,12 +17,10 @@ These must **never** be committed to git or uploaded to GitHub:
 
 | Item | Where it belongs |
 |------|------------------|
-| Apple Team ID | `fastlane/.env` as `FASTLANE_TEAM_ID` (see `fastlane/.env.example`) |
-| App Store Connect API key | `~/.appstoreconnect/api_key.p8` + env vars in `fastlane/.env` |
-| Developer ID certificate / password | macOS Keychain, not the repo |
-| GitHub tokens, passwords | GitHub Secrets (if CI notarization is added later), never in code |
+| App ID, Team ID, ASC API key, signing cert | [GitHub Actions Secrets](docs/GITHUB_SECRETS.md) or local `fastlane/.env` |
+| Developer ID `.p12` | GitHub Secret `APPLE_CERTIFICATE_BASE64` (CI only) or macOS Keychain locally |
 
-`fastlane/.env`, `*.p8`, `*.p12`, and similar paths are in `.gitignore`. CI builds do **not** use your Apple credentials.
+`fastlane/.env`, `*.p8`, `*.p12`, and similar paths are in `.gitignore`. The **Build** workflow on `main` does not use Apple credentials. **Release** (tag `v*`) uses Secrets for notarized DMGs.
 
 ## Reporting vulnerabilities
 
