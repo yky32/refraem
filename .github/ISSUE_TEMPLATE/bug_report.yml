@@ -1,0 +1,30 @@
+name: Bug report
+description: Something broken in Refraem on your Mac
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Include macOS version and whether Accessibility / Screen Recording are enabled for Refraem.
+  - type: input
+    id: version
+    attributes:
+      label: Refraem version
+      placeholder: e.g. 0.1.0 or main @ commit
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: e.g. 15.6
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior

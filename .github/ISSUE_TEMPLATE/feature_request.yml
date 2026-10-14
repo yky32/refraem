@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest an improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    attributes:
+      label: Problem
+      description: What are you trying to do?
+  - type: textarea
+    attributes:
+      label: Proposed solution
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Layout / window snap
+        - Capture
+        - Record
+        - UI / menu bar
+        - Other
