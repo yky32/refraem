@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Traced from Refraem menu bar reference: back window + front window with 3 dots. Template. -->
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- back window (offset up-left) -->
-  <rect x="2" y="2.5" width="13.5" height="10.5" rx="2.75" stroke="black" stroke-width="1.65"/>
-  <!-- front window (screen cap element) -->
-  <rect x="5.5" y="6.5" width="13.5" height="10.5" rx="2.75" stroke="black" stroke-width="1.65"/>
-  <circle cx="7.85" cy="8.75" r="0.95" fill="black"/>
-  <circle cx="10.15" cy="8.75" r="0.95" fill="black"/>
-  <circle cx="12.45" cy="8.75" r="0.95" fill="black"/>
+<!-- Minimal overlap: back layout frame, front capture ring. -->
+<svg width="22" height="22" viewBox="2.7 4.44 18.6 15.12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="5.25" y="6.75" width="9" height="10.5" rx="2.5" stroke="black" stroke-width="1.15" opacity="0.38"/>
+  <rect x="9.75" y="6.75" width="9" height="10.5" rx="2.5" stroke="black" stroke-width="1.6" stroke-linejoin="round"/>
+  <circle cx="14.25" cy="12" r="2.08" stroke="black" stroke-width="1.2"/>
 </svg>
