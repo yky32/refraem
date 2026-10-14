@@ -4,10 +4,12 @@ Black and white only.
 
 ## Mark
 
-**Front window frame** — one rounded rectangle with **three title-bar dots**. That is the screen-capture / frame element (no stacked back window in the logo).
+Matches the **menu bar reference** (`reference-menu-bar-screenshot.png`):
 
-- Dots read as window chrome and “this frame is what you capture.”
-- Layout snapping is product behavior, not drawn in the icon (keeps the menu bar glyph clear at 18pt).
+- **Back window** — offset up-left (layout / depth)
+- **Front window** — screen-capture frame with **three title-bar dots**
+
+Vector sources: `refraem-mark.svg` (22×22 template) and scaled color SVGs. Do not ship the screenshot in the app; it includes the desktop background.
 
 ## Files
 

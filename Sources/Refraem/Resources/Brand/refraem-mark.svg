@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Menu bar: front window frame + three title-bar dots (screen cap). Template, single color. -->
+<!-- Traced from Refraem menu bar reference: back window + front window with 3 dots. Template. -->
 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="3" y="4" width="16" height="14" rx="3.5" stroke="black" stroke-width="1.75"/>
-  <circle cx="6.25" cy="7.25" r="1.1" fill="black"/>
-  <circle cx="9.25" cy="7.25" r="1.1" fill="black"/>
-  <circle cx="12.25" cy="7.25" r="1.1" fill="black"/>
+  <!-- back window (offset up-left) -->
+  <rect x="2" y="2.5" width="13.5" height="10.5" rx="2.75" stroke="black" stroke-width="1.65"/>
+  <!-- front window (screen cap element) -->
+  <rect x="5.5" y="6.5" width="13.5" height="10.5" rx="2.75" stroke="black" stroke-width="1.65"/>
+  <circle cx="7.85" cy="8.75" r="0.95" fill="black"/>
+  <circle cx="10.15" cy="8.75" r="0.95" fill="black"/>
+  <circle cx="12.45" cy="8.75" r="0.95" fill="black"/>
 </svg>
