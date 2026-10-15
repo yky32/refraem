@@ -18,5 +18,8 @@ enum DefaultHotkeys {
         .capture(.screen): GlobalHotkey(keyCode: 18, modifiers: [.command, .shift], character: "1"),
         .capture(.area): GlobalHotkey(keyCode: 19, modifiers: [.command, .shift], character: "2"),
         .capture(.recognizeTextOrQR): GlobalHotkey(keyCode: 31, modifiers: [.control, .option, .command], character: "o"),
+        .capture(.scrolling): GlobalHotkey(keyCode: 20, modifiers: [.command, .shift], character: "3"),
+        .record(.screen): GlobalHotkey(keyCode: 15, modifiers: [.control, .option, .command], character: "r"),
+        .record(.area): GlobalHotkey(keyCode: 21, modifiers: [.control, .option, .command], character: "4"),
     ]
 }

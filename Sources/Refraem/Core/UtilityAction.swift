@@ -3,6 +3,7 @@ import Foundation
 enum UtilityAction: Hashable {
     case window(WindowSnap)
     case capture(CaptureMode)
+    case record(RecordMode)
     case openSettings
     case quit
 }
@@ -55,6 +56,20 @@ enum CaptureMode: String, Hashable {
         case .area: "Capture Area"
         case .scrolling: "Scrolling Capture"
         case .recognizeTextOrQR: "Recognize Text/QR"
+        }
+    }
+}
+
+enum RecordMode: String, Hashable {
+    case screen
+    case area
+    case stop
+
+    var menuTitle: String {
+        switch self {
+        case .screen: "Record Screen"
+        case .area: "Record Area"
+        case .stop: "Stop Recording"
         }
     }
 }

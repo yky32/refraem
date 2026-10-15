@@ -27,10 +27,13 @@ final class MenuController: NSObject {
     }
 
     @objc private func showMenu(_ sender: AnyObject?) {
-        WindowTargetStore.shared.rememberFrontmostIfOtherApp()
-        guard let button = sender as? NSStatusBarButton else { return }
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 4), in: button)
-    }
+     WindowTargetStore.shared.rememberFrontmostIfOtherApp()
+     guard let button = sender as? NSStatusBarButton else { return }
+     tagToAction.removeAll()
+     nextTag = 1
+     menu = UtilitiesMenuBuilder.makeMenu(controller: self)
+     menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 4), in: button)
+ }
 
     @objc func menuItemSelected(_ sender: NSMenuItem) {
         guard let action = tagToAction[sender.tag] else { return }

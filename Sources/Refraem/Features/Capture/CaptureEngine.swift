@@ -7,7 +7,8 @@ final class CaptureEngine {
     func perform(_ mode: CaptureMode) {
         switch mode {
         case .scrolling:
-            notify("Coming soon", "Scrolling capture is on the roadmap.")
+            guard ensureScreenRecordingAccess() else { return }
+            Task { await run(.scrolling) }
         case .screen, .area, .recognizeTextOrQR:
             guard ensureScreenRecordingAccess() else { return }
             Task { await run(mode) }
@@ -23,6 +24,9 @@ final class CaptureEngine {
             case .area:
                 let rect = try await RegionSelector.pickRegion()
                 image = try await ScreenCaptureService.capture(rectInScreenSpace: rect)
+            case .scrolling:
+                let rect = try await RegionSelector.pickRegion()
+                image = try await ScrollingCapture.capture(region: rect)
             case .recognizeTextOrQR:
                 let rect = try await RegionSelector.pickRegion()
                 image = try await ScreenCaptureService.capture(rectInScreenSpace: rect)
@@ -34,8 +38,6 @@ final class CaptureEngine {
                     NSPasteboard.general.setString(text, forType: .string)
                     notify("Copied text", "\(text.prefix(120))\(text.count > 120 ? "…" : "")")
                 }
-                return
-            case .scrolling:
                 return
             }
 
