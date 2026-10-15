@@ -18,6 +18,12 @@ final class AppActions {
             WindowEngine.shared.perform(snap)
         case .capture(let mode):
             CaptureEngine.shared.perform(mode)
+        case .record(let mode):
+            switch mode {
+            case .screen: RecordingEngine.shared.toggleScreen()
+            case .area: RecordingEngine.shared.toggleArea()
+            case .stop: RecordingEngine.shared.stop()
+            }
         case .openSettings:
             SettingsWindowController.shared.show()
         case .quit:

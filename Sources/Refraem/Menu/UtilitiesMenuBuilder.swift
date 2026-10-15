@@ -26,19 +26,16 @@ enum UtilitiesMenuBuilder {
         menu.addItem(sectionHeader("Capture"))
         menu.addItem(item(for: .capture(.screen), controller: controller))
         menu.addItem(item(for: .capture(.area), controller: controller))
-        let scroll = item(for: .capture(.scrolling), controller: controller)
-        scroll.isEnabled = false
-        scroll.toolTip = "Coming in a later milestone"
-        menu.addItem(scroll)
+        menu.addItem(item(for: .capture(.scrolling), controller: controller))
         menu.addItem(item(for: .capture(.recognizeTextOrQR), controller: controller))
 
         menu.addItem(.separator())
         menu.addItem(sectionHeader("Record"))
-        for title in ["Record Screen", "Record Area"] {
-            let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-            item.isEnabled = false
-            item.toolTip = "Coming soon"
-            menu.addItem(item)
+        if RecordingEngine.shared.isRecording {
+            menu.addItem(item(for: .record(.stop), controller: controller))
+        } else {
+            menu.addItem(item(for: .record(.screen), controller: controller))
+            menu.addItem(item(for: .record(.area), controller: controller))
         }
 
         menu.addItem(.separator())
@@ -70,6 +67,7 @@ enum UtilitiesMenuBuilder {
         switch action {
         case .window(let snap): snap.menuTitle
         case .capture(let mode): mode.menuTitle
+        case .record(let mode): mode.menuTitle
         case .openSettings: "Settings…"
         case .quit: "Quit"
         }

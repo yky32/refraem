@@ -37,9 +37,11 @@ Refraem replaces a separate window manager and screenshot utility with **one men
 | Capability | Details |
 |------------|---------|
 | **Layout** | Halves, thirds, quarters; global shortcuts (Rectangle-style ^⌥) |
-| **Capture** | Full screen and region; ⇧⌘1 / ⇧⌘2 |
+| **Capture** | Full screen, region, and scrolling stitch; ⇧⌘1 / ⇧⌘2 / ⇧⌘3 |
 | **OCR** | Region to clipboard as text (^⌥⌘O) |
-| **Record** | Planned |
+| **Markup** | Draw on the preview (black pen), then Copy or Pin |
+| **Pin** | Float the shot above other windows |
+| **Record** | Screen or area to a `.mov` in Pictures/Refraem (^⌥⌘R / ^⌥⌘4). No microphone. |
 
 Open source under the [MIT](LICENSE) license.
 
@@ -78,6 +80,9 @@ Refraem must be running (menu bar icon visible).
 | Capture screen | ⇧⌘1 |
 | Capture area | ⇧⌘2 |
 | Recognize text (OCR) | ^⌥⌘O |
+| Scrolling capture | ⇧⌘3 |
+| Record screen (toggle stop) | ^⌥⌘R |
+| Record area | ^⌥⌘4 |
 
 Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview window.
 
@@ -86,11 +91,10 @@ Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview 
 | Feature | Status |
 |---------|--------|
 | Layout snap and global hotkeys | ✅ |
-| Screen / area capture and OCR | ✅ |
-| Scrolling capture | 🔜 |
-| Screen recording | 🔜 |
-| Markup and pin | 🔜 |
-| Notarized release builds | 🔜 |
+| Screen / area / scrolling capture and OCR | ✅ |
+| Markup (black pen) and pin | ✅ |
+| Screen recording (no mic) | ✅ |
+| Notarized release builds | 🔜 needs Apple secrets |
 
 ## Download from CI
 
