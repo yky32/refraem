@@ -53,11 +53,9 @@ Open source under the [MIT](LICENSE) license.
 2. Move **Refraem.app** to **Applications**.
 3. Launch from the **menu bar** (no Dock icon).
 
-> **No release yet?** Use [Actions → Artifacts](https://github.com/yky32/refraem/actions) after a `main` build, or tag `v0.1.0` for a GitHub Release.
+**Gatekeeper:** Release zips are ad-hoc signed. On first open, use **Right-click → Open** if macOS prompts.
 
-**Gatekeeper:** CI builds are ad-hoc signed. On first open, use **Right-click → Open** if macOS prompts.
-
-**Trust:** Download only from **[Releases](https://github.com/yky32/refraem/releases)** (notarized **DMG** on version tags) or **Actions** builds on **`yky32/refraem`**. See [SECURITY.md](SECURITY.md).
+**Trust:** Download only from **[Releases](https://github.com/yky32/refraem/releases)** on **`yky32/refraem`**. See [SECURITY.md](SECURITY.md).
 
 ### Permissions
 
@@ -101,7 +99,7 @@ Captures go to the **clipboard**, **Pictures/Refraem**, and an optional preview 
 | Event | Where |
 |-------|--------|
 | Push to `main` | [Actions](https://github.com/yky32/refraem/actions) → **Build** → **Artifacts** (zip, ad-hoc) |
-| Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) → **notarized DMG** (maintainer [Secrets](docs/GITHUB_SECRETS.md) required) |
+| Tag `v*` | [Releases](https://github.com/yky32/refraem/releases) → **Refraem-*-macOS.zip** |
 
 ## Brand
 

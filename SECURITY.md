@@ -20,7 +20,7 @@ These must **never** be committed to git or uploaded to GitHub:
 | App ID, Team ID, ASC API key, signing cert | [GitHub Actions Secrets](docs/GITHUB_SECRETS.md) or local `fastlane/.env` |
 | Developer ID `.p12` | GitHub Secret `APPLE_CERTIFICATE_BASE64` (CI only) or macOS Keychain locally |
 
-`fastlane/.env`, `*.p8`, `*.p12`, and similar paths are in `.gitignore`. The **Build** workflow on `main` does not use Apple credentials. **Release** (tag `v*`) uses Secrets for notarized DMGs.
+`fastlane/.env`, `*.p8`, `*.p12`, and similar paths are in `.gitignore`. The **Build** and **Release** workflows do not use Apple credentials. A `v*` tag publishes an ad-hoc signed zip on GitHub Releases.
 
 ## Reporting vulnerabilities
 
