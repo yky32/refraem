@@ -1,5 +1,5 @@
 import AppKit
-import ScreenCaptureKit
+@preconcurrency import ScreenCaptureKit
 
 enum ScreenCaptureService {
     static func captureMainDisplay() async throws -> CGImage {

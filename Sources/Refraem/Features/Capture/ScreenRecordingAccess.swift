@@ -1,5 +1,5 @@
 import AppKit
-import ScreenCaptureKit
+@preconcurrency import ScreenCaptureKit
 
 /// Screen Recording is bound to this signed copy. After a rebuild, Settings can still show an old grant while capture returns declined until the switch is flipped and Refraem relaunches.
 @MainActor

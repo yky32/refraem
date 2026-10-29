@@ -2,7 +2,7 @@ import AppKit
 import AVFoundation
 import CoreMedia
 import CoreVideo
-import ScreenCaptureKit
+@preconcurrency import ScreenCaptureKit
 
 /// Screen-only recording. No microphone — that needs a separate permission decision.
 @MainActor
