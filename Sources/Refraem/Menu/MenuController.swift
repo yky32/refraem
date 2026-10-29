@@ -39,4 +39,11 @@ final class MenuController: NSObject {
         guard let action = tagToAction[sender.tag] else { return }
         actions?.handle(action)
     }
+
+    @objc func toggleLaunchAtLogin(_ sender: NSMenuItem) {
+        let next = !LaunchAtLogin.isEnabled
+        if LaunchAtLogin.setEnabled(next) {
+            sender.state = next ? .on : .off
+        }
+    }
 }

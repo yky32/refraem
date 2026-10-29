@@ -52,10 +52,7 @@ final class RecordingEngine {
     }
 
     private func start(region: CGRect?) async {
-        guard CGPreflightScreenCaptureAccess() || CGRequestScreenCaptureAccess() else {
-            alert("Screen Recording access required", "Enable Refraem in System Settings → Privacy & Security → Screen Recording.")
-            return
-        }
+        guard await ScreenRecordingAccess.ensure() else { return }
         do {
             let session = try await RecordSession.start(region: region)
             self.session = session

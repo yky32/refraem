@@ -4,8 +4,7 @@ import AppKit
 @MainActor
 final class AppActions {
     func registerGlobalHotkeys() {
-        // Phase 1b: CGEvent tap or KeyboardShortcuts — requires Input Monitoring.
-        GlobalHotkeyRegistry.shared.register(defaults: DefaultHotkeys.bindings, handler: handle(_:))
+        GlobalHotkeyRegistry.shared.register(defaults: HotkeyStore.shared.bindings, handler: handle(_:))
     }
 
     func unregisterGlobalHotkeys() {

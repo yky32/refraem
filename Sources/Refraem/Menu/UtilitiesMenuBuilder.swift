@@ -21,6 +21,15 @@ enum UtilitiesMenuBuilder {
         ] {
             menu.addItem(item(for: .window(snap), controller: controller))
         }
+        menu.addItem(.separator())
+        for snap in [
+            WindowSnap.maximize, .almostMaximize, .maximizeHeight, .larger, .smaller, .center, .restore,
+        ] {
+            menu.addItem(item(for: .window(snap), controller: controller))
+        }
+        menu.addItem(.separator())
+        menu.addItem(item(for: .window(.nextDisplay), controller: controller))
+        menu.addItem(item(for: .window(.previousDisplay), controller: controller))
 
         menu.addItem(.separator())
         menu.addItem(sectionHeader("Capture"))
@@ -39,7 +48,19 @@ enum UtilitiesMenuBuilder {
         }
 
         menu.addItem(.separator())
-        menu.addItem(item(for: .openSettings, controller: controller, title: "Settings…"))
+        let launch = NSMenuItem(
+            title: "Launch at Startup",
+            action: #selector(MenuController.toggleLaunchAtLogin(_:)),
+            keyEquivalent: ""
+        )
+        launch.target = controller
+        launch.state = LaunchAtLogin.isEnabled ? .on : .off
+        menu.addItem(launch)
+
+        let settings = item(for: .openSettings, controller: controller, title: "Settings…")
+        settings.keyEquivalent = ","
+        settings.keyEquivalentModifierMask = .command
+        menu.addItem(settings)
         menu.addItem(item(for: .quit, controller: controller, title: "Quit"))
 
         return menu
@@ -59,6 +80,11 @@ enum UtilitiesMenuBuilder {
         )
         item.target = controller
         item.tag = tag
+        if case .window(let snap) = action, let image = NSImage(systemSymbolName: snap.symbolName, accessibilityDescription: snap.menuTitle) {
+            image.isTemplate = true
+            image.size = NSSize(width: 16, height: 16)
+            item.image = image
+        }
         applyKeyEquivalent(to: item, action: action)
         return item
     }
@@ -79,25 +105,25 @@ enum UtilitiesMenuBuilder {
         return item
     }
 
+    @MainActor
     private static func applyKeyEquivalent(to item: NSMenuItem, action: UtilityAction) {
-        guard let hotkey = DefaultHotkeys.bindings[action] else { return }
-        if let char = hotkey.character {
-            item.keyEquivalent = String(char)
-        } else {
-            item.keyEquivalent = hotkey.arrowKeyEquivalent
-        }
+        guard let hotkey = HotkeyStore.shared.binding(for: action) else { return }
+        item.keyEquivalent = hotkey.menuKeyEquivalent
         item.keyEquivalentModifierMask = hotkey.nsModifierFlags
     }
 }
 
 private extension GlobalHotkey {
-    var arrowKeyEquivalent: String {
+    var menuKeyEquivalent: String {
+        if let character, !character.isEmpty { return character }
         switch keyCode {
-        case 123: "\u{F702}"
-        case 124: "\u{F703}"
-        case 125: "\u{F701}"
-        case 126: "\u{F700}"
-        default: ""
+        case 123: return "\u{F702}"
+        case 124: return "\u{F703}"
+        case 125: return "\u{F701}"
+        case 126: return "\u{F700}"
+        case 36: return "\r"
+        case 51: return "\u{08}"
+        default: return ""
         }
     }
 }

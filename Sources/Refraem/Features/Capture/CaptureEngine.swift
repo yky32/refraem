@@ -5,13 +5,9 @@ final class CaptureEngine {
     static let shared = CaptureEngine()
 
     func perform(_ mode: CaptureMode) {
-        switch mode {
-        case .scrolling:
-            guard ensureScreenRecordingAccess() else { return }
-            Task { await run(.scrolling) }
-        case .screen, .area, .recognizeTextOrQR:
-            guard ensureScreenRecordingAccess() else { return }
-            Task { await run(mode) }
+        Task {
+            guard await ScreenRecordingAccess.ensure() else { return }
+            await run(mode)
         }
     }
 
@@ -48,27 +44,6 @@ final class CaptureEngine {
             return
         } catch {
             notify("Capture failed", error.localizedDescription)
-        }
-    }
-
-    private func ensureScreenRecordingAccess() -> Bool {
-        if CGPreflightScreenCaptureAccess() { return true }
-        promptScreenRecording()
-        return CGPreflightScreenCaptureAccess()
-    }
-
-    private func promptScreenRecording() {
-        _ = CGRequestScreenCaptureAccess()
-        let alert = NSAlert()
-        alert.messageText = "Screen Recording access required"
-        alert.informativeText =
-            "\(Brand.name) needs Screen Recording to capture the display. Enable it in System Settings → Privacy & Security → Screen Recording, then try again."
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Later")
-        if alert.runModal() == .alertFirstButtonReturn {
-            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-                NSWorkspace.shared.open(url)
-            }
         }
     }
 

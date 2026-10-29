@@ -75,6 +75,11 @@ Refraem must be running (menu bar icon visible).
 | Left / right / top / bottom half | ^⌥ ← → ↑ ↓ |
 | Quarters | ^⌥ U · I · J · K |
 | Thirds | ^⌥ D · F · G · E · T |
+| Maximize / almost maximize | ^⌥ ↩ · ^⌥ ⇧↩ |
+| Maximize height | ^⌥ ⇧↑ |
+| Larger / smaller | ^⌥ = · ^⌥ - |
+| Center / restore | ^⌥ C · ^⌥ ⌫ |
+| Next / previous display | ^⌥ ⌘→ · ^⌥ ⌘← |
 | Capture screen | ⇧⌘1 |
 | Capture area | ⇧⌘2 |
 | Recognize text (OCR) | ^⌥⌘O |

@@ -1,19 +1,69 @@
 import AppKit
 import Carbon
 
-struct GlobalHotkey: Hashable {
+struct GlobalHotkey: Hashable, Codable {
     let keyCode: UInt16
     let modifiers: [Modifier]
-    let character: Character?
+    let character: String?
 
-    init(keyCode: UInt16, modifiers: [Modifier], character: Character? = nil) {
+    init(keyCode: UInt16, modifiers: [Modifier], character: String? = nil) {
         self.keyCode = keyCode
-        self.modifiers = modifiers
+        self.modifiers = Self.ordered(modifiers)
         self.character = character
     }
 
-    enum Modifier: Hashable {
+    init(event: NSEvent) {
+        var modifiers: [Modifier] = []
+        let flags = event.modifierFlags
+        if flags.contains(.control) { modifiers.append(.control) }
+        if flags.contains(.option) { modifiers.append(.option) }
+        if flags.contains(.shift) { modifiers.append(.shift) }
+        if flags.contains(.command) { modifiers.append(.command) }
+        let raw = event.charactersIgnoringModifiers?.lowercased()
+        let printable = (raw?.count == 1 && event.keyCode >= 0) ? raw : nil
+        let named = [123, 124, 125, 126, 36, 48, 49, 51, 53, 117].contains(Int(event.keyCode))
+        self.init(keyCode: event.keyCode, modifiers: modifiers, character: named ? nil : printable)
+    }
+
+    enum Modifier: String, Hashable, Codable {
         case control, option, command, shift
+    }
+
+    func sameCombo(as other: GlobalHotkey) -> Bool {
+        keyCode == other.keyCode && modifiers == other.modifiers
+    }
+
+    var shortcutLabel: String {
+        var text = ""
+        if modifiers.contains(.control) { text += "⌃" }
+        if modifiers.contains(.option) { text += "⌥" }
+        if modifiers.contains(.shift) { text += "⇧" }
+        if modifiers.contains(.command) { text += "⌘" }
+        text += keyTitle
+        return text
+    }
+
+    private var keyTitle: String {
+        switch keyCode {
+        case 123: return "←"
+        case 124: return "→"
+        case 125: return "↓"
+        case 126: return "↑"
+        case 36: return "↩"
+        case 48: return "⇥"
+        case 49: return "Space"
+        case 51: return "⌫"
+        case 53: return "⎋"
+        case 117: return "⌦"
+        default:
+            if let character, !character.isEmpty { return character.uppercased() }
+            return "Key \(keyCode)"
+        }
+    }
+
+    private static func ordered(_ modifiers: [Modifier]) -> [Modifier] {
+        let order: [Modifier] = [.control, .option, .shift, .command]
+        return order.filter { modifiers.contains($0) }
     }
 
     var nsModifierFlags: NSEvent.ModifierFlags {
@@ -56,6 +106,7 @@ final class GlobalHotkeyRegistry {
     private var hotKeyRefs: [EventHotKeyRef] = []
     private var eventHandlerRef: EventHandlerRef?
     private var nextID: UInt32 = 1
+    private var lastFire: (id: UInt32, time: TimeInterval)?
     private static var installed = false
 
     func register(defaults: [UtilityAction: GlobalHotkey], handler: @escaping (UtilityAction) -> Void) {
@@ -74,12 +125,14 @@ final class GlobalHotkeyRegistry {
                 UInt32(hotkey.keyCode),
                 hotkey.carbonModifiers,
                 hotKeyID,
-                GetApplicationEventTarget(),
+                GetEventDispatcherTarget(),
                 0,
                 &ref
             )
             if status == noErr, let ref {
                 hotKeyRefs.append(ref)
+            } else {
+                LayoutLog.write("hotkey-register-failed id=\(id) key=\(hotkey.keyCode) mods=\(hotkey.carbonModifiers) status=\(status)")
             }
         }
     }
@@ -121,6 +174,7 @@ final class GlobalHotkeyRegistry {
             )
             guard err == noErr else { return err }
             let actionID = hotKeyID.id
+            LayoutLog.write("hotkey-fired id=\(actionID)")
             DispatchQueue.main.async {
                 Task { @MainActor in
                     GlobalHotkeyRegistry.shared.dispatchHotKey(id: actionID)
@@ -129,17 +183,23 @@ final class GlobalHotkeyRegistry {
             return noErr
         }
 
-        InstallEventHandler(
-            GetApplicationEventTarget(),
+        let status = InstallEventHandler(
+            GetEventDispatcherTarget(),
             callback,
             1,
             &eventType,
             nil,
             &eventHandlerRef
         )
+        LayoutLog.write("hotkey-handler status=\(status)")
     }
 
     private func dispatchHotKey(id: UInt32) {
+        let now = ProcessInfo.processInfo.systemUptime
+        if let lastFire, lastFire.id == id, now - lastFire.time < 0.75 {
+            return
+        }
+        lastFire = (id, now)
         guard let action = actionByHotKeyID[id] else { return }
         handler?(action)
     }

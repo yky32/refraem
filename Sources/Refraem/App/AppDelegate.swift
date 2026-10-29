@@ -7,13 +7,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        let slot = NSStatusBar.system.thickness
+        statusItem = NSStatusBar.system.statusItem(withLength: slot)
         if let button = statusItem.button {
+            button.imageScaling = .scaleProportionallyUpOrDown
             button.image = BrandIcon.menuBarImage()
             button.toolTip = Brand.name
         }
         MenuController.shared.attach(to: statusItem, actions: actions)
+        HotkeyStore.shared.onChange = { [actions] in
+            actions.registerGlobalHotkeys()
+        }
         actions.registerGlobalHotkeys()
+        WindowEngine.shared.consumePendingSnap()
+        LayoutReview.startIfRequested()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

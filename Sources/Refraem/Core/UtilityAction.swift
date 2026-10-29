@@ -23,6 +23,15 @@ enum WindowSnap: String, Hashable, CaseIterable {
     case lastThird
     case firstTwoThirds
     case lastTwoThirds
+    case maximize
+    case almostMaximize
+    case maximizeHeight
+    case larger
+    case smaller
+    case center
+    case restore
+    case nextDisplay
+    case previousDisplay
 
     var menuTitle: String {
         switch self {
@@ -40,6 +49,40 @@ enum WindowSnap: String, Hashable, CaseIterable {
         case .lastThird: "Last Third"
         case .firstTwoThirds: "First Two Thirds"
         case .lastTwoThirds: "Last Two Thirds"
+        case .maximize: "Maximize"
+        case .almostMaximize: "Almost Maximize"
+        case .maximizeHeight: "Maximize Height"
+        case .larger: "Larger"
+        case .smaller: "Smaller"
+        case .center: "Center"
+        case .restore: "Restore"
+        case .nextDisplay: "Next Display"
+        case .previousDisplay: "Previous Display"
+        }
+    }
+
+    var symbolName: String {
+        switch self {
+        case .leftHalf: "rectangle.lefthalf.filled"
+        case .rightHalf: "rectangle.righthalf.filled"
+        case .centerHalf: "rectangle.split.2x1"
+        case .topHalf: "rectangle.tophalf.filled"
+        case .bottomHalf: "rectangle.bottomhalf.filled"
+        case .topLeft: "rectangle.inset.filled"
+        case .topRight: "rectangle.inset.filled"
+        case .bottomLeft: "rectangle.inset.filled"
+        case .bottomRight: "rectangle.inset.filled"
+        case .firstThird, .centerThird, .lastThird, .firstTwoThirds, .lastTwoThirds:
+            "rectangle.split.3x1"
+        case .maximize: "arrow.up.left.and.arrow.down.right"
+        case .almostMaximize: "rectangle.inset.filled"
+        case .maximizeHeight: "arrow.up.and.down"
+        case .larger: "plus.rectangle"
+        case .smaller: "minus.rectangle"
+        case .center: "square.dashed"
+        case .restore: "arrow.uturn.backward"
+        case .nextDisplay: "chevron.right.2"
+        case .previousDisplay: "chevron.left.2"
         }
     }
 }
